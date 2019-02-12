@@ -190,7 +190,6 @@ class AudioPlayer : Fragment(), PlaylistAdapter.IPlayer, TextWatcher {
         binding.coverMediaSwitcher.updateMedia(playlistModel.service)
 
         updatePlayPause()
-        updateShuffleMode()
         updateRepeatMode()
         binding.timeline.setOnSeekBarChangeListener(timelineListener)
         updateBackground()
@@ -204,12 +203,6 @@ class AudioPlayer : Fragment(), PlaylistAdapter.IPlayer, TextWatcher {
         binding.playPause.contentDescription = text
         binding.headerPlayPause.setImageResource(imageResId)
         binding.headerPlayPause.contentDescription = text
-    }
-
-    private fun updateShuffleMode() {
-        binding.shuffle.setImageResource(UiTools.getResourceFromAttribute(activity, if (playlistModel.shuffling) R.attr.ic_shuffle_on else R.attr.ic_shuffle))
-        binding.shuffle.contentDescription = resources.getString(if (playlistModel.shuffling) R.string.shuffle_on else R.string.shuffle)
-        binding.shuffle.visibility = if (playlistModel.canShuffle) View.VISIBLE else View.INVISIBLE
     }
 
     private fun updateRepeatMode() {
@@ -326,8 +319,11 @@ class AudioPlayer : Fragment(), PlaylistAdapter.IPlayer, TextWatcher {
     }
 
     fun onShuffleClick(view: View) {
-        playlistModel.shuffle()
-        updateShuffleMode()
+        var position = playlistModel.time.toInt()
+        position -= 10000
+        if (position < 0) position = 0
+
+        playlistModel.time = position.toLong()
     }
 
     fun onResumeToVideoClick(v: View) {
